@@ -4,7 +4,7 @@ Opinmona is an implementation of [Circuit Breaker](https://martinfowler.com/blik
 
 
 ###  Usage
-Opinmona serves has a wrapper around methods or any callable you want to circuit break.
+Opinmona serves as a wrapper around methods or any callable you want to circuit break.
 
 
 ####  Usage for object method
