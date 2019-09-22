@@ -1,22 +1,40 @@
 ## Opinmona
 
+Opinmona is an implementation of [Circuit Breaker](https://martinfowler.com/bliki/CircuitBreaker.html) implementation in PHP.
 
-Circuit Breaker
+
+###  Usage
+Opinmona serves has a wrapper around methods or any callable you want to circuit break.
 
 
-### Sample Usage
+####  Usage for object method
 ```php
 
-require __DIR__ . '/vendor/autoload.php';
-
 use Pyjac\Opinmona\CircuitBreakerFactory;
-
+use Pyjac\Opinmona\CircuitBreakerOpenException;
 
 class TestApi {
     public function send(string $a) {
         return $a;
     }
 }
+
+$api = new TestApi();
+$cb = CircuitBreakerFactory::fromMethod($api, 'send');
+try {
+    $cb->invoke(2);
+} catch(CircuitBreakerOpenException $e) {
+    // 
+}
+
+```
+
+####  Usage for callable class
+
+```php
+
+use Pyjac\Opinmona\CircuitBreakerFactory;
+use Pyjac\Opinmona\CircuitBreakerOpenException;
 
 class TestApiCallable {
     public function __invoke(string $a)
@@ -25,40 +43,57 @@ class TestApiCallable {
     }
 }
 
-$testApiFunction = function (string $a){
+$api = new TestApiCallable();
+
+$cb = CircuitBreakerFactory::fromCallable($api);
+
+try {
+    $cb->invoke(2);
+} catch(CircuitBreakerOpenException $e) {
+    // 
+}
+```
+
+
+####  Usage for function
+
+```php
+
+use Pyjac\Opinmona\CircuitBreakerFactory;
+use Pyjac\Opinmona\CircuitBreakerOpenException;
+
+$testApiFunction = function (string $a) {
     return $a;
 };
 
+$cb = CircuitBreakerFactory::fromCallable($testApiFunction);
 
-// Class method
-$api = new TestApi();
-$e = \Exception::class;
-
-$cb = CircuitBreakerFactory::fromMethod($api, 'send', $e);
-var_dump($cb->invoke(2));
-var_dump($cb->invoke(2));
-var_dump($cb->invoke(2));
-var_dump($cb->invoke(2));
-
-// Error Check function
-$fe = function() {
-    return false;
-};
-
-$api = new TestApiCallable();
-$cb = CircuitBreakerFactory::fromCallable($api, $fe);
-var_dump($cb->invoke(5));
-var_dump($cb->invoke(2));
-
-
-$cb = CircuitBreakerFactory::fromCallable($testApiFunction, $fe);
-var_dump($cb->invoke(50));
-var_dump($cb->invoke(20));
+try {
+    $cb->invoke('something');
+} catch(CircuitBreakerOpenException $e) {
+    // 
+}
+```
 
 
 
-// updating options and Storage
+
+### Updating options and Storage
+
+```php
+
+use Pyjac\Opinmona\CircuitBreakerFactory;
+use Pyjac\Opinmona\CircuitBreakerOpenException;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+
+
+class TestApiCallable {
+    public function __invoke(string $a)
+    {
+        return $a;
+    }
+}
+
 
 $options = [
     'ttl' => 5600,
@@ -75,8 +110,11 @@ $errorCheck = function($response, $circuitObject)  {
 
 $api = new TestApiCallable();
 $cb = CircuitBreakerFactory::fromCallable($api, $errorCheck, new ArrayAdapter(), $options);
-var_dump($cb->invoke(5));
-var_dump($cb->invoke(2));
+try {
+    $cb->invoke(5)
+} catch(CircuitBreakerOpenException $e) {
+
+};
 
 ```
 
