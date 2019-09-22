@@ -27,7 +27,7 @@ class CircuitBreaker
     public function invoke(...$args) 
     {
         if ($this->isAvailable() === false) {
-            return null;
+            throw new CircuitBreakerOpenException();
         }
         
         $response = null;

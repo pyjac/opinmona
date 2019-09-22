@@ -3,7 +3,8 @@
 namespace Pyjac\Opinmona;
 
 
-class Circuit {
+class Circuit 
+{
 
     private $instance;
 

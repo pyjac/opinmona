@@ -4,8 +4,8 @@ namespace Pyjac\Opinmona;
 
 
 // https://www.php.net/manual/en/language.types.object.php#114442
-class StdObject {
-
+class StdObject 
+{
     public function __construct(array $arguments = []) 
     {
         if (!empty($arguments)) {
