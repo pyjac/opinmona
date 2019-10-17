@@ -2,6 +2,7 @@
 
 namespace Pyjac\Opinmona;
 
+use Closure;
 
 class Circuit 
 {
@@ -39,27 +40,30 @@ class Circuit
 
     public static function create($instance, string $method = ''): self
     {
-        if (\is_object($instance)) {
+        $obj = null;
+        if (\is_object($instance) && !$instance instanceof Closure) {
             if ($method !== '') {
+                if (method_exists($instance, $method) === false) {
+                    throw new \BadMethodCallException();
+                }
 
                 return new self($instance, $method);
             }
 
             if (\is_callable($instance)) {
-                $obj = new StdObject();
-                $obj->invoke = $instance;
-    
-                return new self($obj, 'invoke');
+                return new self($instance, '__invoke');
             }
+
+            throw new \InvalidArgumentException("create expects an object with method name or is callable");
         }
 
-        if (\is_callable($instance)) {
+       if (\is_callable($instance)) {
             $obj = new StdObject();
-            $obj->invoke = $instance;
-
-            return new self($obj, 'invoke');
-        }
-
-        throw new \Exception("Something is wrong");
+            $method = 'invoke';
+            $obj->$method = $instance;
+            return new self($obj, $method);
+        } 
+        
+        throw new \InvalidArgumentException("create expects an object or a callable");
     }
 }

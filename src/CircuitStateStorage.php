@@ -39,7 +39,12 @@ class CircuitStateStorage
 
     private function getItem(string $attributeName): CacheItem
     {
-        return $this->cache->getItem($this->cachePrefix . $this->circuitServiceName . $attributeName);
+        return $this->cache->getItem($this->getCacheKey($attributeName));
+    }
+
+    public function getCacheKey(string $attributeName)
+    {
+        return $this->cachePrefix . $this->circuitServiceName . $attributeName;
     }
 
     public function loadStatus(string $attributeName)

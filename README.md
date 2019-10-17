@@ -1,6 +1,6 @@
 ## Opinmona
 
-Opinmona is an implementation of [Circuit Breaker](https://martinfowler.com/bliki/CircuitBreaker.html) implementation in PHP.
+Opinmona is an implementation of [Circuit Breaker](https://martinfowler.com/bliki/CircuitBreaker.html) in PHP.
 
 
 ###  Usage
